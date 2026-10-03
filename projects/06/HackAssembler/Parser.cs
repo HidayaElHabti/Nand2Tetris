@@ -10,13 +10,11 @@ namespace HackAssembler
     internal class Parser
     {
         private string? currentLine;
-        private int? indexEqual;
-        private int? indexSemicolon;
+        private int indexEqual;
+        private int indexSemicolon;
         public Parser(StreamReader streamReader)
         {
-            currentLine = streamReader.ReadLine();
-            indexEqual = currentLine?.IndexOf('=');
-            indexSemicolon = currentLine?.IndexOf(';');
+            Advance(streamReader);
         }
         
 
@@ -40,6 +38,9 @@ namespace HackAssembler
                     Advance(streamReader);
                 if(currentLine.StartsWith("//"))
                     Advance(streamReader);
+
+                indexEqual = currentLine.IndexOf('=');
+                indexSemicolon = currentLine.IndexOf(';');
             }
         }
 
@@ -65,20 +66,7 @@ namespace HackAssembler
         {
             if (indexEqual == -1)
                 return string.Empty;
-            return currentLine!.Substring(0, indexEqual!.Value);
-        }
-
-        //Returns the symbolic comp part of the current C-instruction
-        public string Comp()
-        {
-            if(Dest() == string.Empty && Jump() == string.Empty)
-                return currentLine!;
-            if(Jump() == string.Empty)
-                return currentLine!.Substring(indexEqual!.Value + 1);
-            if(Dest() == string.Empty)
-                return currentLine!.Substring(0, indexSemicolon!.Value);
-
-            return currentLine!.Substring(indexEqual!.Value + 1, indexSemicolon!.Value);
+            return currentLine!.Substring(0, indexEqual);
         }
 
         //Returns the symbolic jump part of the current C-instruction
@@ -86,7 +74,20 @@ namespace HackAssembler
         {
             if(indexSemicolon == -1)
                 return string.Empty;
-            return currentLine!.Substring(indexSemicolon!.Value + 1);
+            return currentLine!.Substring(indexSemicolon + 1);
+        }
+
+        //Returns the symbolic comp part of the current C-instruction
+        public string Comp()
+        {
+            if (Dest() == string.Empty && Jump() == string.Empty)
+                return currentLine!;
+            if (Jump() == string.Empty)
+                return currentLine!.Substring(indexEqual + 1);
+            if (Dest() == string.Empty)
+                return currentLine!.Substring(0, indexSemicolon);
+
+            return currentLine!.Substring(indexEqual + 1, indexSemicolon);
         }
     }
     enum InstructionType

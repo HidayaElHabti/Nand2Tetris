@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace HackAssembler
 {
-    internal class Code
+    internal static class Code
     {
         //Returns the binary code of the dest mnemonic
-        public string Dest(string mnemonic)
+        public static string Dest(string mnemonic)
         {
             if (mnemonic == string.Empty)
                 return "000";
@@ -24,63 +24,36 @@ namespace HackAssembler
         }
 
         //Returns the binary code of the comp mnemonic
-        public string Comp(string mnemonic)
+        public static string Comp(string mnemonic)
         {
             string a = mnemonic.Contains('M')? "1" : "0";
 
-            switch (mnemonic){
-                case "0":   
-                    return a + "101010";
-                case "1":   
-                    return a + "111111";
-                case "-1":  
-                    return a + "111010";
-                case "D":   
-                    return a + "001100";
-                case "A":
-                case "M":
-                    return a + "110000";
-                case "!D":   
-                    return a + "001101";
-                case "!A":
-                case "!M":
-                    return a + "110001";
-                case "-D":   
-                    return a + "001111";
-                case "-A":
-                case "-M":
-                    return a + "110011";
-                case "D+1":   
-                    return a + "011111";
-                case "A+1":
-                case "M+1":
-                    return a + "110111";
-                case "D-1":   
-                    return a + "001110";
-                case "A-1":
-                case "M-1":
-                    return a + "110010";
-                case "D+A":
-                case "D+M":
-                    return a + "000010";
-                case "D-A":
-                case "D-M":
-                    return a + "010011";
-                case "A-D":
-                case "M-D":
-                    return a + "000111";
-                case "D&A":
-                case "D&M": 
-                    return a + "000000";
-                case "D|A":
-                case "D|M":
-                    return a + "010101";
-                default: return a + "101010";
-            }
+            return a + mnemonic switch
+            {
+                "0" => "101010",
+                "1" => "111111",
+                "-1" => "111010",
+                "D" => "001100",
+                "A" or "M" => "110000",
+                "!D" => "001101",
+                "!A" or "!M" => "110001",
+                "-D" => "001111",
+                "-A" or "-M" => "110011",
+                "D+1" => "011111",
+                "A+1" or "M+1" => "110111",
+                "D-1" => "001110",
+                "A-1" or "M-1" => "110010",
+                "D+A" or "D+M" => "000010",
+                "D-A" or "D-M" => "010011",
+                "A-D" or "M-D" => "000111",
+                "D&A" or "D&M" => "000000",
+                "D|A" or "D|M" => "010101",
+                _ => "101010",
+            };
         }
 
         //Returns the binary code of the jump mnemonic
-        public string Jump(string mnemonic)
+        public static string Jump(string mnemonic)
         {
             return mnemonic switch
             {

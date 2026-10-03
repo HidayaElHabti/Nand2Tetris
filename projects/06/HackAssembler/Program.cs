@@ -31,9 +31,8 @@ class Program
             {
                 if(parser.GetInstructionType() == InstructionType.C_INSTRUCTION)
                 {
-                    string instruction;
+                    string instruction = Code.Dest(parser.Dest()) + Code.Comp(parser.Comp()) + Code.Jump(parser.Jump());
                     outputLines.Add(instruction);
-
                 }
 
                 else if (parser.GetInstructionType() == InstructionType.A_INSTRUCTION)
@@ -44,5 +43,7 @@ class Program
                 parser.Advance(sr);
             }
         }
+
+        File.WriteAllLines(outputProgram, outputLines);
     }
 }

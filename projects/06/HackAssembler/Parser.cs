@@ -58,7 +58,18 @@ namespace HackAssembler
         //Returns the symbol xxx if the current instruction is (xxx) or @xxx
         public string Symbol()
         {
-            return "xxx";
+            if(GetInstructionType() == InstructionType.A_INSTRUCTION)
+            {
+                return currentLine!.Substring(1);
+            }
+            else if (GetInstructionType() == InstructionType.L_INSTRUCTION)
+            {
+                return currentLine!.Trim(['(', ')']);
+            }
+            else
+            {
+                return currentLine!;
+            }
         }
 
         //Returns the symbolic dest part of the current C-instruction

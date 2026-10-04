@@ -15,11 +15,11 @@ namespace HackAssembler
                 return "000";
             char[] dest = {'0','0','0'};
             if (mnemonic.Contains('M'))
-                dest[0] = '1';
+                dest[2] = '1';
             if(mnemonic.Contains('D'))
                 dest[1] = '1';
             if(mnemonic.Contains('A'))
-                dest[2] = '1';
+                dest[0] = '1';
             return new string(dest);
         }
 

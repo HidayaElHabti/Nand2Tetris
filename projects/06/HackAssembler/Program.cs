@@ -29,17 +29,19 @@ class Program
             Parser parser = new(sr);
             while (parser.HasMoreLine())
             {
+                string instruction = "";
                 if(parser.GetInstructionType() == InstructionType.C_INSTRUCTION)
                 {
-                    string instruction = Code.Dest(parser.Dest()) + Code.Comp(parser.Comp()) + Code.Jump(parser.Jump());
-                    outputLines.Add(instruction);
+                    instruction = "111" + Code.Comp(parser.Comp()) + Code.Dest(parser.Dest()) + Code.Jump(parser.Jump());
                 }
 
                 else if (parser.GetInstructionType() == InstructionType.A_INSTRUCTION)
                 {
-
+                    int address = int.Parse(parser.Symbol());
+                    instruction = Convert.ToString(address, 2).PadLeft(16, '0');
                 }
-                
+                outputLines.Add(instruction);
+
                 parser.Advance(sr);
             }
         }

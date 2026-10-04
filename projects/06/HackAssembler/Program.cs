@@ -22,30 +22,33 @@ class Program
             return;
         }
 
-        var outputLines = new List<string>();
+        using StreamReader sr = new(inputProgram);
+        using StreamWriter sw = new(outputProgram);
 
-        using(StreamReader sr = new(inputProgram))
+        Parser parser = new(sr);
+        bool firstLine = true;
+        while (parser.HasMoreLine())
         {
-            Parser parser = new(sr);
-            while (parser.HasMoreLine())
+            string instruction = "";
+            if (parser.GetInstructionType() == InstructionType.C_INSTRUCTION)
             {
-                string instruction = "";
-                if(parser.GetInstructionType() == InstructionType.C_INSTRUCTION)
-                {
-                    instruction = "111" + Code.Comp(parser.Comp()) + Code.Dest(parser.Dest()) + Code.Jump(parser.Jump());
-                }
-
-                else if (parser.GetInstructionType() == InstructionType.A_INSTRUCTION)
-                {
-                    int address = int.Parse(parser.Symbol());
-                    instruction = Convert.ToString(address, 2).PadLeft(16, '0');
-                }
-                outputLines.Add(instruction);
-
-                parser.Advance(sr);
+                instruction = "111" + Code.Comp(parser.Comp()) + Code.Dest(parser.Dest()) + Code.Jump(parser.Jump());
             }
-        }
 
-        File.WriteAllLines(outputProgram, outputLines);
+            else if (parser.GetInstructionType() == InstructionType.A_INSTRUCTION)
+            {
+                int address = int.Parse(parser.Symbol());
+                instruction = Convert.ToString(address, 2).PadLeft(16, '0');
+            }
+
+            if (!firstLine)
+                sw.Write(Environment.NewLine);
+
+            sw.Write(instruction);
+
+            firstLine = false;
+
+            parser.Advance(sr);
+        }
     }
 }

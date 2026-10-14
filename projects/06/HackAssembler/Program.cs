@@ -61,11 +61,10 @@ class Program
 
     private static void TranslateCode(string inputFilePath, string outputFilePath, SymbolTable symbolTable)
     {
-        int variableCounter = 16;
         bool firstLine = true;
 
-        using StreamWriter sw = new(outputFilePath);
         Parser parser = new(inputFilePath);
+        using StreamWriter sw = new(outputFilePath);
         while (parser.HasMoreLine())
         {
             string instruction = "";
@@ -91,9 +90,8 @@ class Program
                 }
                 else
                 {
-                    symbolTable.AddEntry(symbol, variableCounter);
-                    instruction = Convert.ToString(variableCounter, 2).PadLeft(16, '0');
-                    variableCounter++;
+                    symbolTable.AddEntry(symbol, 0, isVariable: true);
+                    instruction = Convert.ToString(symbolTable.GetAddress(symbol), 2).PadLeft(16, '0');
                 }
             }
 

@@ -9,10 +9,12 @@ namespace HackAssembler
     internal class SymbolTable
     {
         private Dictionary<string, int> symbols;
+        private int variableCounter;
 
         public SymbolTable()
         {
             symbols = [];
+            variableCounter = 16;
         }
 
         public void InitializeTable()
@@ -31,9 +33,16 @@ namespace HackAssembler
             AddEntry("KBD", 24576);
         }
 
-        public void AddEntry(string symbol, int address)
+        public void AddEntry(string symbol, int address, bool isVariable = false)
         {
-            symbols[symbol] = address;
+            if (isVariable)
+            {
+                AddEntry(symbol, variableCounter++);
+            }
+            else
+            {
+                symbols[symbol] = address;
+            }
         }
 
         public bool Contains(string symbol)

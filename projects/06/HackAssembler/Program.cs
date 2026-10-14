@@ -32,9 +32,8 @@ class Program
         symbolTable.InitializeTable();
 
         int lineNumber = 0;
-
-        using StreamReader sr = new(inputFilePath);
-        Parser parser = new(sr);
+        
+        Parser parser = new(inputFilePath);
         
         while (parser.HasMoreLine())
         {
@@ -56,7 +55,7 @@ class Program
 
             }
 
-            parser.Advance(sr);
+            parser.Advance();
         }
     }
 
@@ -64,15 +63,15 @@ class Program
     {
         int variableCounter = 16;
         bool firstLine = true;
-        using StreamReader sr = new (inputFilePath);
+
         using StreamWriter sw = new(outputFilePath);
-        Parser parser = new Parser(sr);
+        Parser parser = new(inputFilePath);
         while (parser.HasMoreLine())
         {
             string instruction = "";
             if(parser.GetInstructionType() == InstructionType.L_INSTRUCTION)
             {
-                parser.Advance(sr);
+                parser.Advance();
                 continue;
             }
             else if (parser.GetInstructionType() == InstructionType.C_INSTRUCTION)
@@ -105,7 +104,7 @@ class Program
 
             firstLine = false;
 
-            parser.Advance(sr);
+            parser.Advance();
         }
     }
 }

@@ -12,9 +12,11 @@ namespace HackAssembler
         private string? currentLine;
         private int indexEqual;
         private int indexSemicolon;
-        public Parser(StreamReader streamReader)
+        private StreamReader streamReader;
+        public Parser(string inputFilePath)
         {
-            Advance(streamReader);
+            streamReader = new(inputFilePath);
+            Advance();
         }
         
 
@@ -28,16 +30,16 @@ namespace HackAssembler
         Reads the current line from the input, and makes it the current instruction.
         Skips over white space and comments.
          */
-        public void Advance(StreamReader streamReader)
+        public void Advance()
         {
             currentLine = streamReader.ReadLine();
             if(currentLine != null)
             {
                 currentLine = currentLine.Trim();
                 if(currentLine == "")
-                    Advance(streamReader);
+                    Advance();
                 if(currentLine.StartsWith("//"))
-                    Advance(streamReader);
+                    Advance();
 
                 indexEqual = currentLine.IndexOf('=');
                 indexSemicolon = currentLine.IndexOf(';');

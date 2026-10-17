@@ -20,9 +20,10 @@ namespace VMTranslator
 
         public void WriteArithmetic(string command)
         {
-            //pop 1st last element of stack (y) to D register
-            WritePopInstructions();
-            //pop 2nd last element of stack (x)
+            if(command != "neg" & command != "not")
+                //pop y to D register
+                WritePopInstructions();
+            //pop x
             //perform arithmetic command with the last element saved in D register
             //save result in D Register
             WritePopInstructions(command);
@@ -187,7 +188,7 @@ namespace VMTranslator
                     WriteDRegisterAssignmentInstruction("D+M");//D=D+M
                     break;
                 case "sub":
-                    WriteDRegisterAssignmentInstruction("D-M");//D=D-M
+                    WriteDRegisterAssignmentInstruction("M-D");//D=M-D
                     break;
                 case "neg":
                     WriteDRegisterAssignmentInstruction("-D");//D=-D

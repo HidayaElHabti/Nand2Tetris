@@ -31,13 +31,25 @@ namespace VMTranslator
             WritePushInstructions();
         }
 
+        public void Close()
+        {
+            //write infinite loop
+            WriteInstruction("(END)");
+            WriteInstruction("@END");
+            WriteInstruction("0;JMP");
+
+            streamWriter.Close();
+        }
+
         public void WritePushPop(CommandType command, string segment, int index)
         {
             if(command == CommandType.C_PUSH)
                 WritePushInstructions(segment, index);
             else if (command == CommandType.C_POP)
                 WritePopInstructions(segment, index);
-        }//temp and pointer segment implementations are missing
+        }
+
+        #region private
         private void WritePushInstructions(string segment, int index)
         {
             if (segment == "constant")
@@ -105,17 +117,7 @@ namespace VMTranslator
             }
             WriteCInstruction("M", "D");//M=D
         }
-        public void Close()
-        {
-            //write infinite loop
-            WriteInstruction("(END)");
-            WriteInstruction("@END");
-            WriteInstruction("0;JMP");
-
-            streamWriter.Close();
-        }
-
-        #region private
+        
         private void WriteInstruction(string instruction)
         {
             streamWriter.WriteLine("//" + instruction);
@@ -224,6 +226,7 @@ namespace VMTranslator
             }
             WriteDRegisterAssignmentInstruction("0");//D=0
             WriteAInstruction("END_" + counter);//@END_counter
+            WriteInstruction("0;JMP");//0;JMP
             WriteInstruction("(TRUE_" + counter + ")");//(TRUE_counter)
             WriteDRegisterAssignmentInstruction("-1");//D=-1
             WriteInstruction("(END_" + counter + ")");//(END_counter)

@@ -60,9 +60,9 @@ namespace VMTranslator
                 return currentLine!.Split(' ')[1];
         }
 
-        public string GetArg2()
+        public int GetArg2()
         {
-            return currentLine!.Split(' ')[2];//pop and push commands
+            return int.Parse(currentLine!.Split(' ')[2]);//pop and push commands
         }
     }
     enum CommandType

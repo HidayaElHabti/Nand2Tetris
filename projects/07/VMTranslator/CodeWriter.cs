@@ -20,10 +20,10 @@ namespace VMTranslator
 
         public void WriteArithmetic(string command)
         {
-            //pop 1st last element of stack to D register
+            //pop 1st last element of stack (y) to D register
             WritePopInstructions();
-            //pop 2nd last element of stack
-            //perform arithmetic command with the 1st last element of stack saved in D register
+            //pop 2nd last element of stack (x)
+            //perform arithmetic command with the last element saved in D register
             //save result in D Register
             WritePopInstructions(command);
 
@@ -145,22 +145,22 @@ namespace VMTranslator
             switch(operation)//D=DopM or D=opD
             {
                 case "add":
-                    WriteDRegisterAssignmentInstruction("D+M");
+                    WriteDRegisterAssignmentInstruction("D+M");//D=D+M
                     break;
                 case "sub":
-                    WriteDRegisterAssignmentInstruction("D-M");
+                    WriteDRegisterAssignmentInstruction("D-M");//D=D-M
                     break;
                 case "neg":
-                    WriteDRegisterAssignmentInstruction("-D");
+                    WriteDRegisterAssignmentInstruction("-D");//D=-D
                     break;
                 case "and":
-                    WriteDRegisterAssignmentInstruction("D&M");
+                    WriteDRegisterAssignmentInstruction("D&M");//D=D&M
                     break;
                 case "or":
-                    WriteDRegisterAssignmentInstruction("D|M");
+                    WriteDRegisterAssignmentInstruction("D|M");//D=D|M
                     break;
                 case "not":
-                    WriteDRegisterAssignmentInstruction("!D");
+                    WriteDRegisterAssignmentInstruction("!D");//D=!D
                     break;
                 case "eq":
                 case "lt":
@@ -171,7 +171,7 @@ namespace VMTranslator
         }
         private void WriteDRegisterTrueOrFalseAssignementInstruction(string operation)
         {
-            WriteDRegisterAssignmentInstruction("D-M");
+            WriteDRegisterAssignmentInstruction("D-M");//D=D-M=y-x
             WriteAInstruction("TRUE_" + counter);//@TRUE_counter
             switch (operation)
             {
@@ -179,10 +179,10 @@ namespace VMTranslator
                     WriteInstruction("D;JEQ");//D;JEQ
                     break;
                 case "lt":
-                    WriteInstruction("D;JLT");//D;JLT
+                    WriteInstruction("D;JGT");//D;JGT
                     break;
                 case "gt":
-                    WriteInstruction("D;JGT");//D;JGT
+                    WriteInstruction("D;JLT");//D;JLT
                     break;
             }
             WriteDRegisterAssignmentInstruction("0");//D=0

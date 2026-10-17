@@ -48,8 +48,8 @@ namespace VMTranslator
                 return CommandType.C_POP;
             if (operations.Contains(currentLine!))
                 return CommandType.C_ARITHMETIC;
-            else
-                return CommandType.C_ARITHMETIC;//TODO: complete implementation
+            else //TODO: complete implementation
+                return CommandType.C_ARITHMETIC;
         }
 
         public string GetArg1()

@@ -34,43 +34,77 @@ namespace VMTranslator
         public void WritePushPop(CommandType command, string segment, int index)
         {
             if(command == CommandType.C_PUSH)
-            {
-                if(segment == "constant")
-                {
-                    WriteAInstruction(index.ToString());//@index
-                    WriteDRegisterAssignmentInstruction("A");//D=A
-                }
-                else if(segment == "static")
-                {
-                    WriteAInstruction(fileName + '.' + index);//@FileName.i
-                    WriteDRegisterAssignmentInstruction("M");//D=M
-                }
-                else
-                {
-                    WriteAInstructionForSegment(segment);//@SEGMENT
-                    WriteCInstruction("A", "M+" + index);//A=M+i
-                    WriteDRegisterAssignmentInstruction("M");
-                }
-
-                WritePushInstructions();
-            }
+                WritePushInstructions(segment, index);
             else if (command == CommandType.C_POP)
+                WritePopInstructions(segment, index);
+        }//temp and pointer segment implementations are missing
+        private void WritePushInstructions(string segment, int index)
+        {
+            if (segment == "constant")
             {
-                WritePopInstructions();
-                if(segment == "static")
+                WriteAInstruction(index.ToString());//@index
+                WriteDRegisterAssignmentInstruction("A");//D=A
+            }
+            else if (segment == "static")
+            {
+                WriteAInstruction(fileName + '.' + index);//@FileName.i
+                WriteDRegisterAssignmentInstruction("M");//D=M
+            }
+            else if (segment == "pointer")
+            {
+                switch (index)
                 {
-                    WriteAInstruction(fileName + '.' + index);//@FileName.i
-                    WriteCInstruction("M", "D");//M=D
+                    case 0:
+                        WriteAInstruction("THIS");//@THIS
+                        break;
+                    case 1:
+                        WriteAInstruction("THAT");//@THAT
+                        break;
                 }
+                WriteDRegisterAssignmentInstruction("M");//D=M
+            }
+            else
+            {
+                WriteAInstructionForSegment(segment);//@SEGMENT
+                if(segment == "temp")
+                    WriteCInstruction("A", "A+" + index);//A=A+i
                 else
-                {
-                    WriteAInstructionForSegment(segment);//@SEGMENT
                     WriteCInstruction("A", "M+" + index);//A=M+i
-                    WriteCInstruction("M", "D");
+                WriteDRegisterAssignmentInstruction("M");
+            }
+
+            WritePushInstructions();
+        }
+        private void WritePopInstructions(string segment, int index)
+        {
+            WritePopInstructions();
+            if (segment == "static")
+            {
+                WriteAInstruction(fileName + '.' + index);//@FileName.i
+            }
+            else if(segment == "pointer")
+            {
+                switch (index)
+                {
+                    case 0:
+                        WriteAInstruction("THIS");//@THIS
+                        break;
+                    case 1:
+                        WriteAInstruction("THAT");//@THAT
+                        break;
                 }
             }
-        }//temp and pointer segment implementations are missing
-
+            else
+            {
+                WriteAInstructionForSegment(segment);//@SEGMENT
+                if (segment == "temp")
+                    WriteCInstruction("A", "A+" + index);//A=A+i
+                else
+                    WriteCInstruction("A", "M+" + index);//A=M+i
+                
+            }
+            WriteCInstruction("M", "D");//M=D
+        }
         public void Close()
         {
             //write infinite loop
@@ -114,6 +148,9 @@ namespace VMTranslator
                     break;
                 case "that":
                     WriteAInstruction("THAT");//@THAT
+                    break;
+                case "temp":
+                    WriteAInstruction("TEMP");//@TEMP
                     break;
             }
         }

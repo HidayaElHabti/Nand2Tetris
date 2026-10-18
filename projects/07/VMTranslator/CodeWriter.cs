@@ -78,11 +78,13 @@ namespace VMTranslator
             }
             else
             {
+                WriteAInstruction(index.ToString());//@index
+                WriteDRegisterAssignmentInstruction("A");//D=A
                 WriteAInstructionForSegment(segment);//@SEGMENT
                 if(segment == "temp")
-                    WriteCInstruction("A", "A+" + index);//A=A+i
+                    WriteCInstruction("A", "D+A");//A=D+A=TEMP+index
                 else
-                    WriteCInstruction("A", "M+" + index);//A=M+i
+                    WriteCInstruction("A", "D+M");//A=D+M=base_address+index
                 WriteDRegisterAssignmentInstruction("M");
             }
 
@@ -90,13 +92,15 @@ namespace VMTranslator
         }
         private void WritePopInstructions(string segment, int index)
         {
-            WritePopInstructions();
             if (segment == "static")
             {
+                WritePopInstructions();
                 WriteAInstruction(fileName + '.' + index);//@FileName.i
+                WriteCInstruction("M", "D");//M=D
             }
             else if(segment == "pointer")
             {
+                WritePopInstructions();
                 switch (index)
                 {
                     case 0:
@@ -106,17 +110,27 @@ namespace VMTranslator
                         WriteAInstruction("THAT");//@THAT
                         break;
                 }
+                WriteCInstruction("M", "D");//M=D
             }
             else
             {
+                WriteAInstruction(index.ToString());//@index
+                WriteDRegisterAssignmentInstruction("A");//D=A
                 WriteAInstructionForSegment(segment);//@SEGMENT
                 if (segment == "temp")
-                    WriteCInstruction("A", "A+" + index);//A=A+i
+                    WriteDRegisterAssignmentInstruction("D+A");//D=D+A
                 else
-                    WriteCInstruction("A", "M+" + index);//A=M+i
-                
+                    WriteDRegisterAssignmentInstruction("D+M");//D=D+M
+                WriteAInstruction("R13");//@R13
+                WriteCInstruction("M", "D");//M=D
+
+                WritePopInstructions();//D=popped value
+
+                WriteAInstruction("R13");//@R13
+                WriteCInstruction("A", "M");//A=M
+                WriteCInstruction("M", "D");//M=D
             }
-            WriteCInstruction("M", "D");//M=D
+            
         }
         
         private void WriteInstruction(string instruction)
@@ -153,7 +167,7 @@ namespace VMTranslator
                     WriteAInstruction("THAT");//@THAT
                     break;
                 case "temp":
-                    WriteAInstruction("TEMP");//@TEMP
+                    WriteAInstruction("5");//@5
                     break;
             }
         }

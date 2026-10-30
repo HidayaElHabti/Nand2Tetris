@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -45,9 +46,22 @@ namespace VMTranslator
                 WritePopInstructions(segment, index);
         }
 
-        public void WriteLabel() { }
-        public void WriteGoto() { }
-        public void WriteIf() { }
+        public void WriteLabel(string label) 
+        {
+            WriteInstruction('(' + fileName + '.' + label + ')');//(FileName.label)
+        }
+        public void WriteGoto(string label) 
+        {
+            WriteAInstruction(fileName + '.' + label);//@FileName.Label
+            WriteInstruction("0;JMP");//0;JMP
+
+        }
+        public void WriteIf(string label) 
+        {
+            WritePopInstructions();
+            WriteAInstruction(fileName + '.' + label);//@FileName.Label
+            WriteInstruction("D;JNE");//D;JNE
+        }
         public void Close()
         {
             //write infinite loop
@@ -140,7 +154,6 @@ namespace VMTranslator
             }
             
         }
-        
         private void WriteInstruction(string instruction)
         {
             streamWriter.WriteLine("//" + instruction);

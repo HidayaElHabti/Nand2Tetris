@@ -8,14 +8,19 @@ namespace VMTranslator
 {
     internal class CodeWriter
     {
-        private readonly string fileName;
+        private string fileName;
         private readonly StreamWriter streamWriter;
         private int counter;
         public CodeWriter(string outputFileName) 
         {
-            fileName = outputFileName;
             streamWriter = new(outputFileName);
             counter = 0;
+            //TODO: write bootstrap code
+        }
+
+        public void SetFileName(string newFileName)
+        {
+            fileName = newFileName;
         }
 
         public void WriteArithmetic(string command)
@@ -32,6 +37,17 @@ namespace VMTranslator
             WritePushInstructions();
         }
 
+        public void WritePushPop(CommandType command, string segment, int index)
+        {
+            if (command == CommandType.C_PUSH)
+                WritePushInstructions(segment, index);
+            else if (command == CommandType.C_POP)
+                WritePopInstructions(segment, index);
+        }
+
+        public void WriteLabel() { }
+        public void WriteGoto() { }
+        public void WriteIf() { }
         public void Close()
         {
             //write infinite loop
@@ -40,14 +56,6 @@ namespace VMTranslator
             WriteInstruction("0;JMP");
 
             streamWriter.Close();
-        }
-
-        public void WritePushPop(CommandType command, string segment, int index)
-        {
-            if(command == CommandType.C_PUSH)
-                WritePushInstructions(segment, index);
-            else if (command == CommandType.C_POP)
-                WritePopInstructions(segment, index);
         }
 
         #region private

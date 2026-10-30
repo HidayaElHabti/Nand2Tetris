@@ -48,6 +48,12 @@ namespace VMTranslator
                 return CommandType.C_POP;
             if (operations.Contains(currentLine!))
                 return CommandType.C_ARITHMETIC;
+            if (currentLine!.StartsWith("if-goto"))
+                return CommandType.C_IF;
+            if (currentLine!.StartsWith("label")) 
+                return CommandType.C_LABEL;
+            if (currentLine!.StartsWith("goto"))
+                return CommandType.C_GOTO;
             else //TODO: complete implementation
                 return CommandType.C_ARITHMETIC;
         }
@@ -56,13 +62,13 @@ namespace VMTranslator
         {
             if (GetCommandType() == CommandType.C_ARITHMETIC)
                 return currentLine!;
-            else //Pop or push commands
+            else
                 return currentLine!.Split(' ')[1];
         }
 
         public int GetArg2()
         {
-            return int.Parse(currentLine!.Split(' ')[2]);//pop and push commands
+            return int.Parse(currentLine!.Split(' ')[2]);//TODO: complete implementation
         }
     }
     enum CommandType
@@ -74,6 +80,7 @@ namespace VMTranslator
         C_GOTO,
         C_FUNCTION,
         C_RETURN,
-        C_CALL
+        C_CALL,
+        C_IF
     }
 }

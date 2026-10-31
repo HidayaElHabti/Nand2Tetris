@@ -11,9 +11,9 @@ namespace VMTranslator
         private string? currentLine;
         private readonly StreamReader streamReader;
         private readonly static List<string> operations = ["add", "sub",  "eq", "gt", "lt", "and", "or", "neg", "not"];
-        public Parser(string inputFileName)
+        public Parser(string inputFilePath)
         {
-            streamReader = new(inputFileName);
+            streamReader = new(inputFilePath);
             Advance();
         }
 
@@ -46,14 +46,14 @@ namespace VMTranslator
                 return CommandType.C_PUSH;
             if (currentLine!.StartsWith("pop"))
                 return CommandType.C_POP;
-            if (operations.Contains(currentLine!))
-                return CommandType.C_ARITHMETIC;
             if (currentLine!.StartsWith("if-goto"))
                 return CommandType.C_IF;
             if (currentLine!.StartsWith("label")) 
                 return CommandType.C_LABEL;
             if (currentLine!.StartsWith("goto"))
                 return CommandType.C_GOTO;
+            if (operations.Contains(currentLine!))
+                return CommandType.C_ARITHMETIC;
             else //TODO: complete implementation
                 return CommandType.C_ARITHMETIC;
         }

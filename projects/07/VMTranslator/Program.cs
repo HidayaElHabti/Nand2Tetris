@@ -16,32 +16,39 @@ class Program
 
         if(Path.GetExtension(source).Equals(".vm"))//one file
         {
-            TranslateFile(source);
+            string fileName = Path.GetFileNameWithoutExtension(source);
+            string outputFile = fileName + ".asm";
+            CodeWriter codeWriter = new(fileName, outputFile);
+
+            TranslateFile(source, outputFile, codeWriter);
+            codeWriter.Close();
         }
         else //folder
         {
-            var files = Directory.GetFiles(source);
+            string outputFile = source + ".asm";
+            CodeWriter codeWriter = new("FOLDER", outputFile);
 
+            var files = Directory.GetFiles(source);
             foreach (var file in files)
             {
                 if (!Path.GetExtension(source).Equals(".vm"))
                     continue;
-                TranslateFile(file);
+
+                codeWriter.SetFileName(Path.GetFileNameWithoutExtension(file));
+                TranslateFile(file, outputFile, codeWriter);
             }
+            codeWriter.Close();
         }
     }
 
-    private static void TranslateFile(string filePath)
+    private static void TranslateFile(string inputFile, string outputFile, CodeWriter codeWriter)
     {
-        string fileName = Path.GetFileNameWithoutExtension(filePath);
-        string outputFile = fileName + ".asm";
-
-        Parser parser = new(filePath);
-        CodeWriter codeWriter = new(fileName, outputFile);
+        Parser parser = new(inputFile);
+        
         while (parser.HasMoreLine())
         {
             var command = parser.GetCommandType();
-            switch (parser.GetCommandType())
+            switch (command)
             {
                 case CommandType.C_PUSH:
                 case CommandType.C_POP:
@@ -50,12 +57,19 @@ class Program
                 case CommandType.C_ARITHMETIC:
                     codeWriter.WriteArithmetic(parser.GetArg1());
                     break;
+                case CommandType.C_LABEL:
+                    codeWriter.WriteLabel(parser.GetArg1());
+                    break;
+                case CommandType.C_GOTO:
+                    codeWriter.WriteGoto(parser.GetArg1());
+                    break;
+                case CommandType.C_IF:
+                    codeWriter.WriteIf(parser.GetArg1());
+                    break;
             }
 
             parser.Advance();
         }
-
-        codeWriter.Close();
     }
         
 }

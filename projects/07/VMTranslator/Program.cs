@@ -1,4 +1,5 @@
-﻿using VMTranslator;
+﻿using System.Diagnostics.CodeAnalysis;
+using VMTranslator;
 
 class Program
 {
@@ -7,23 +8,36 @@ class Program
         //Check command-line arguments
         if (args.Length != 1)
         {
-            Console.WriteLine("Usage: program <filename>");
+            Console.WriteLine("Usage: program <source>");
             return;
         }
 
-        string filename = args[0];
-        string inputProgram = filename + ".vm";
-        string outputProgram = filename + ".asm";
+        string source = args[0];
 
-        //Check if input file exist
-        if (!File.Exists(inputProgram))
+        if(source.EndsWith(".vm"))//one file
         {
-            Console.WriteLine($"Assembly program not found: {inputProgram}");
-            return;
+            TranslateFile(source);
         }
+        else //folder
+        {
+            var files = Directory.GetFiles(source);
+            foreach (var file in files)
+            {
+                if (!file.EndsWith(".vm"))
+                    continue;
+                TranslateFile(file);
+            }
+        }
+        //does this work with paths?
+    }
 
-        Parser parser = new(inputProgram);
-        CodeWriter codeWriter = new(outputProgram);
+    private static void TranslateFile(string file)
+    {
+        string fileName = file[..file.IndexOf('.')];
+        string outputFile = fileName + ".asm";
+
+        Parser parser = new(file);
+        CodeWriter codeWriter = new(fileName, outputFile);
         while (parser.HasMoreLine())
         {
             var command = parser.GetCommandType();
@@ -43,4 +57,5 @@ class Program
 
         codeWriter.Close();
     }
+        
 }

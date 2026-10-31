@@ -11,9 +11,9 @@ namespace VMTranslator
         private string? currentLine;
         private readonly StreamReader streamReader;
         private readonly static List<string> operations = ["add", "sub",  "eq", "gt", "lt", "and", "or", "neg", "not"];
-        public Parser(string inputFilePath)
+        public Parser(string inputFileName)
         {
-            streamReader = new(inputFilePath);
+            streamReader = new(inputFileName);
             Advance();
         }
 

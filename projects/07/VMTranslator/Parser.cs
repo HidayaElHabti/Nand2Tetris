@@ -32,10 +32,9 @@ namespace VMTranslator
             currentLine = streamReader.ReadLine();
             if (currentLine != null)
             {
-                currentLine = currentLine.Trim();
-                if (currentLine == "")
-                    Advance();
-                if (currentLine.StartsWith("//"))
+                int index = currentLine!.IndexOf("//");
+                currentLine = (index != -1 ? currentLine[..index] : currentLine).Trim();
+                if (currentLine.Equals(String.Empty))
                     Advance();
             }
         }

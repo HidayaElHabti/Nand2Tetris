@@ -12,10 +12,10 @@ namespace VMTranslator
         private string fileName;
         private readonly StreamWriter streamWriter;
         private int counter;
-        public CodeWriter(string inputFileName, string outputFileName) 
+        public CodeWriter(string inputFileName, string outputFile) 
         {
             fileName = inputFileName;
-            streamWriter = new(outputFileName);
+            streamWriter = new(outputFile);
             counter = 0;
             //TODO: write bootstrap code
         }

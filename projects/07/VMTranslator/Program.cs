@@ -14,29 +14,29 @@ class Program
 
         string source = args[0];
 
-        if(source.EndsWith(".vm"))//one file
+        if(Path.GetExtension(source).Equals(".vm"))//one file
         {
             TranslateFile(source);
         }
         else //folder
         {
             var files = Directory.GetFiles(source);
+
             foreach (var file in files)
             {
-                if (!file.EndsWith(".vm"))
+                if (!Path.GetExtension(source).Equals(".vm"))
                     continue;
                 TranslateFile(file);
             }
         }
-        //does this work with paths?
     }
 
-    private static void TranslateFile(string file)
+    private static void TranslateFile(string filePath)
     {
-        string fileName = file[..file.IndexOf('.')];
+        string fileName = Path.GetFileNameWithoutExtension(filePath);
         string outputFile = fileName + ".asm";
 
-        Parser parser = new(file);
+        Parser parser = new(filePath);
         CodeWriter codeWriter = new(fileName, outputFile);
         while (parser.HasMoreLine())
         {

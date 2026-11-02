@@ -11,12 +11,14 @@ namespace VMTranslator
     {
         private string fileName;
         private readonly StreamWriter streamWriter;
-        private int counter;
+        private int boolean_counter;
+        private int return_counter;
         public CodeWriter(string inputFileName, string outputFile) 
         {
             fileName = inputFileName;
             streamWriter = new(outputFile);
-            counter = 0;
+            boolean_counter = 0;
+            return_counter = 0;
             //TODO: write bootstrap code
         }
 
@@ -24,21 +26,19 @@ namespace VMTranslator
         {
             fileName = newFileName;
         }
-
         public void WriteArithmetic(string command)
         {
             if(command != "neg" & command != "not")
                 //pop y to D register
-                WritePopInstructions();
+                WritePopInstructionsIntoDRegister();
             //pop x
             //perform arithmetic command with the last element saved in D register
             //save result in D Register
-            WritePopInstructions(command);
+            WritePopInstructionsIntoDRegister(command);
 
             //push value of D register to stack
-            WritePushInstructions();
+            WritePushInstructionsFromDRegister();
         }
-
         public void WritePushPop(CommandType command, string segment, int index)
         {
             if (command == CommandType.C_PUSH)
@@ -46,7 +46,6 @@ namespace VMTranslator
             else if (command == CommandType.C_POP)
                 WritePopInstructions(segment, index);
         }
-
         public void WriteLabel(string label) 
         {
             WriteInstruction('(' + fileName + '.' + label + ')');//(FileName.label)
@@ -59,9 +58,82 @@ namespace VMTranslator
         }
         public void WriteIf(string label) 
         {
-            WritePopInstructions();
+            WritePopInstructionsIntoDRegister();
             WriteAInstruction(fileName + '.' + label);//@FileName.Label
             WriteInstruction("D;JNE");//D;JNE
+        }
+        public void WriteFunction(string functionName, int nVars)
+        {
+            WriteInstruction('(' + functionName + ')');
+            for (int i = 0; i < nVars; i++)
+            {
+                WritePushInstructions("0");
+            }
+        }
+        public void WriteCall(string functionName, int nArgs)
+        {
+            string returnAddress = fileName + '.' + functionName + "$ret." + return_counter;
+            //save frame of caller
+            WritePushInstructions(returnAddress);
+            WritePushInstructions("LCL");
+            WritePushInstructions("ARG");
+            WritePushInstructions("THIS");
+            WritePushInstructions("THAT");
+
+            //reposition ARG and LCL
+            WritePushInstructions("SP");
+            WritePushInstructions("constant", 5);
+            WritePushInstructions("constant", nArgs);
+            WriteArithmetic("sub");
+            WriteArithmetic("sub");
+            WritePopInstructions("ARG");
+
+            WritePushInstructions("SP");
+            WritePopInstructions("LCL");
+
+            //goto f
+            WriteAInstruction(functionName);//@FunctionName
+            WriteInstruction("0;JMP");
+
+            //define returnAddress
+            WriteInstruction('(' + returnAddress + ')');
+
+            return_counter++;
+        }
+        public void WriteReturn()
+        {
+            //copy return value into argument 0
+            WritePopInstructions("argument", 0);
+
+            //reposition SP : SP=ARG+1
+            WritePushInstructions("ARG");
+            WritePushInstructions("constant", 1);
+            WriteArithmetic("add");
+            WritePopInstructions("SP");
+
+            //FRAME = LCL
+            WritePushInstructions("LCL");
+            WritePopInstructions("FRAME");
+
+            //returnAddress = LCL-5 = frame 0
+            WritePushInstructions("frame", 0);
+            WritePopInstructions("returnAddress");
+            //ARG = LCL - 4 = frame 2
+            WritePushInstructions("frame", 2);
+            WritePopInstructions("ARG");
+            //THIS = LCL - 2 = frame 3
+            WritePushInstructions("frame", 3);
+            WritePopInstructions("THIS");
+            //THAT = LCL - 1 = frame 4
+            WritePushInstructions("frame", 4);
+            WritePopInstructions("THAT");
+            //LCL = LCL - 4 = frame 1
+            WritePushInstructions("frame", 1);
+            WritePopInstructions("LCL");
+
+            //goto returnAddressAddress
+            WriteAInstruction("returnAddress");
+            WriteInstruction("0;JMP");
         }
         public void Close()
         {
@@ -74,6 +146,12 @@ namespace VMTranslator
         }
 
         #region private
+        private void WritePushInstructions(string value)
+        {
+            WriteAInstruction(value);//@value
+            WriteDRegisterAssignmentInstruction("A");//D=A
+            WritePushInstructionsFromDRegister();//D->Stack
+        }
         private void WritePushInstructions(string segment, int index)
         {
             if (segment == "constant")
@@ -111,19 +189,25 @@ namespace VMTranslator
                 WriteDRegisterAssignmentInstruction("M");
             }
 
-            WritePushInstructions();
+            WritePushInstructionsFromDRegister();
+        }
+        private void WritePopInstructions(string address)
+        {
+            WritePopInstructionsIntoDRegister();
+            WriteAInstruction(address);//@address
+            WriteCInstruction("M", "D");//M=D
         }
         private void WritePopInstructions(string segment, int index)
         {
             if (segment == "static")
             {
-                WritePopInstructions();
+                WritePopInstructionsIntoDRegister();
                 WriteAInstruction(fileName + '.' + index);//@FileName.i
                 WriteCInstruction("M", "D");//M=D
             }
             else if(segment == "pointer")
             {
-                WritePopInstructions();
+                WritePopInstructionsIntoDRegister();
                 switch (index)
                 {
                     case 0:
@@ -147,7 +231,7 @@ namespace VMTranslator
                 WriteAInstruction("R13");//@R13
                 WriteCInstruction("M", "D");//M=D
 
-                WritePopInstructions();//D=popped value
+                WritePopInstructionsIntoDRegister();//D=popped value
 
                 WriteAInstruction("R13");//@R13
                 WriteCInstruction("A", "M");//A=M
@@ -191,9 +275,12 @@ namespace VMTranslator
                 case "temp":
                     WriteAInstruction("5");//@5
                     break;
+                case "frame":
+                    WriteAInstruction("FRAME");//@FRAME
+                    break;
             }
         }
-        private void WritePushInstructions()//From value of D Register
+        private void WritePushInstructionsFromDRegister()//From value of D Register
         {
             //Add value of D register to stack
             WriteAInstruction("SP");//@SP
@@ -206,7 +293,7 @@ namespace VMTranslator
         }
         //Write instructions that pops the last element of stack, or the result of an arithmetic operation on the last element(s)
         //into the D register, 
-        private void WritePopInstructions(string? operation = null)
+        private void WritePopInstructionsIntoDRegister(string? operation = null)
         {
             WriteAInstruction("SP");//@SP
             WriteCInstruction("M", "M-1");//M=M-1
@@ -248,7 +335,7 @@ namespace VMTranslator
         private void WriteDRegisterTrueOrFalseAssignementInstruction(string operation)
         {
             WriteDRegisterAssignmentInstruction("D-M");//D=D-M=y-x
-            WriteAInstruction("TRUE_" + counter);//@TRUE_counter
+            WriteAInstruction("TRUE_" + boolean_counter);//@TRUE_counter
             switch (operation)
             {
                 case "eq":
@@ -262,12 +349,12 @@ namespace VMTranslator
                     break;
             }
             WriteDRegisterAssignmentInstruction("0");//D=0
-            WriteAInstruction("END_" + counter);//@END_counter
+            WriteAInstruction("END_" + boolean_counter);//@END_counter
             WriteInstruction("0;JMP");//0;JMP
-            WriteInstruction("(TRUE_" + counter + ")");//(TRUE_counter)
+            WriteInstruction("(TRUE_" + boolean_counter + ")");//(TRUE_counter)
             WriteDRegisterAssignmentInstruction("-1");//D=-1
-            WriteInstruction("(END_" + counter + ")");//(END_counter)
-            counter++;
+            WriteInstruction("(END_" + boolean_counter + ")");//(END_counter)
+            boolean_counter++;
         }
         #endregion private
     }

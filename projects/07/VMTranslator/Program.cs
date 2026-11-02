@@ -66,6 +66,15 @@ class Program
                 case CommandType.C_IF:
                     codeWriter.WriteIf(parser.GetArg1());
                     break;
+                case CommandType.C_CALL:
+                    codeWriter.WriteCall(parser.GetArg1(), parser.GetArg2());
+                    break;
+                case CommandType.C_FUNCTION:
+                    codeWriter.WriteFunction(parser.GetArg1(), parser.GetArg2());
+                    break;
+                case CommandType.C_RETURN:
+                    codeWriter.WriteReturn();
+                    break;
             }
 
             parser.Advance();

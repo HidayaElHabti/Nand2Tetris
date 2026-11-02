@@ -71,7 +71,7 @@ namespace VMTranslator
 
         public int GetArg2()
         {
-            return int.Parse(currentLine!.Split(' ')[2]);//TODO: complete implementation
+            return int.Parse(currentLine!.Split(' ')[2]);
         }
     }
     enum CommandType

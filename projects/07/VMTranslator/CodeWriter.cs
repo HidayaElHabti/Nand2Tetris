@@ -72,9 +72,11 @@ namespace VMTranslator
         }
         public void WriteCall(string functionName, int nArgs)
         {
-            string returnAddress = fileName + '.' + functionName + "$ret." + return_counter;
+            string returnAddress = fileName + '.' + functionName + "$ret." + return_counter++;
             //save frame of caller
-            WritePushInstructions(returnAddress);
+            WriteAInstruction(returnAddress);//@FileName.FunctionName$ret.i
+            WriteDRegisterAssignmentInstruction("A");//D=A
+            WritePushInstructionsFromDRegister();//D->Stack
             WritePushInstructions("LCL");
             WritePushInstructions("ARG");
             WritePushInstructions("THIS");
@@ -96,9 +98,7 @@ namespace VMTranslator
             WriteInstruction("0;JMP");
 
             //define returnAddress
-            WriteInstruction('(' + returnAddress + ')');
-
-            return_counter++;
+            WriteInstruction('(' + returnAddress + ')');//(FileName.FunctionName$ret.i)
         }
         public void WriteReturn()
         {

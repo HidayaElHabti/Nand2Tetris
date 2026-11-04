@@ -67,7 +67,7 @@ namespace VMTranslator
             WriteInstruction('(' + functionName + ')');
             for (int i = 0; i < nVars; i++)
             {
-                WritePushInstructions("0");
+                WritePushInstructions("constant", 0);
             }
         }
         public void WriteCall(string functionName, int nArgs)
@@ -105,19 +105,23 @@ namespace VMTranslator
             //copy return value into argument 0
             WritePopInstructions("argument", 0);
 
-            //reposition SP : SP=ARG+1
+            //FRAME = LCL - 5
+            WritePushInstructions("LCL");
+            WritePushInstructions("constant", 5);
+            WriteArithmetic("sub");
+            WritePopInstructions("FRAME");
+
+            //Save value of new SP = ARG + 1
             WritePushInstructions("ARG");
             WritePushInstructions("constant", 1);
             WriteArithmetic("add");
-            WritePopInstructions("SP");
-
-            //FRAME = LCL
-            WritePushInstructions("LCL");
-            WritePopInstructions("FRAME");
 
             //returnAddress = LCL-5 = frame 0
             WritePushInstructions("frame", 0);
             WritePopInstructions("returnAddress");
+            //LCL = LCL - 4 = frame 1
+            WritePushInstructions("frame", 1);
+            WritePopInstructions("LCL");
             //ARG = LCL - 4 = frame 2
             WritePushInstructions("frame", 2);
             WritePopInstructions("ARG");
@@ -127,12 +131,13 @@ namespace VMTranslator
             //THAT = LCL - 1 = frame 4
             WritePushInstructions("frame", 4);
             WritePopInstructions("THAT");
-            //LCL = LCL - 4 = frame 1
-            WritePushInstructions("frame", 1);
-            WritePopInstructions("LCL");
+
+            //reposition SP : SP=ARG+1
+            WritePopInstructions("SP");//from value pushed above 
 
             //goto returnAddressAddress
             WriteAInstruction("returnAddress");
+            WriteInstruction("A=M");
             WriteInstruction("0;JMP");
         }
         public void Close()
@@ -146,10 +151,10 @@ namespace VMTranslator
         }
 
         #region private
-        private void WritePushInstructions(string value)
+        private void WritePushInstructions(string address)
         {
-            WriteAInstruction(value);//@value
-            WriteDRegisterAssignmentInstruction("A");//D=A
+            WriteAInstruction(address);//@value
+            WriteDRegisterAssignmentInstruction("M");//D=M
             WritePushInstructionsFromDRegister();//D->Stack
         }
         private void WritePushInstructions(string segment, int index)

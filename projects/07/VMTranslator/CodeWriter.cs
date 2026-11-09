@@ -64,7 +64,7 @@ namespace VMTranslator
         }
         public void WriteFunction(string functionName, int nVars)
         {
-            WriteInstruction('(' + functionName + ')');
+            WriteInstruction('(' + fileName + '.' + functionName + ')');//(FileName.FunctionName)
             for (int i = 0; i < nVars; i++)
             {
                 WritePushInstructions("constant", 0);
@@ -86,15 +86,15 @@ namespace VMTranslator
             WritePushInstructions("SP");
             WritePushInstructions("constant", 5);
             WritePushInstructions("constant", nArgs);
+            WriteArithmetic("add");
             WriteArithmetic("sub");
-            WriteArithmetic("sub");
-            WritePopInstructions("ARG");
+            WritePopInstructions("ARG");//ARG = SP - (5 + nArgs)
 
             WritePushInstructions("SP");
-            WritePopInstructions("LCL");
+            WritePopInstructions("LCL");//LCL = SP
 
             //goto f
-            WriteAInstruction(functionName);//@FunctionName
+            WriteAInstruction(fileName + '.' + functionName);//@FileName.FunctionName
             WriteInstruction("0;JMP");
 
             //define returnAddress

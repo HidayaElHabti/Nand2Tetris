@@ -102,35 +102,39 @@ namespace VMTranslator
         }
         public void WriteReturn()
         {
-            //copy return value into argument 0
-            WritePopInstructions("argument", 0);
-
             //FRAME = LCL - 5
             WritePushInstructions("LCL");
             WritePushInstructions("constant", 5);
             WriteArithmetic("sub");
             WritePopInstructions("FRAME");
 
-            //Save value of new SP = ARG + 1
-            WritePushInstructions("ARG");
-            WritePushInstructions("constant", 1);
-            WriteArithmetic("add");
-
             //returnAddress = LCL-5 = frame 0
             WritePushInstructions("frame", 0);
             WritePopInstructions("returnAddress");
+
             //LCL = LCL - 4 = frame 1
             WritePushInstructions("frame", 1);
             WritePopInstructions("LCL");
-            //ARG = LCL - 4 = frame 2
-            WritePushInstructions("frame", 2);
-            WritePopInstructions("ARG");
+
             //THIS = LCL - 2 = frame 3
             WritePushInstructions("frame", 3);
             WritePopInstructions("THIS");
+
             //THAT = LCL - 1 = frame 4
             WritePushInstructions("frame", 4);
             WritePopInstructions("THAT");
+
+            //copy return value into argument 0
+            WritePopInstructions("argument", 0);
+
+            //Save value of new SP before changing ARG=> SP = ARG + 1
+            WritePushInstructions("ARG");
+            WritePushInstructions("constant", 1);
+            WriteArithmetic("add");
+            
+            //ARG = LCL - 4 = frame 2
+            WritePushInstructions("frame", 2);
+            WritePopInstructions("ARG");
 
             //reposition SP : SP=ARG+1
             WritePopInstructions("SP");//from value pushed above 

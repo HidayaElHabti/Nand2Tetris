@@ -3,6 +3,7 @@ using VMTranslator;
 
 class Program
 {
+
     static void Main(string[] args)
     {
         //Check command-line arguments
@@ -13,35 +14,32 @@ class Program
         }
 
         string source = args[0];
+        string outputFile = source + ".asm";
 
-        if(Path.GetExtension(source).Equals(".vm"))//one file
+        if (Path.GetExtension(source).Equals(".vm"))//one file
         {
             string fileName = Path.GetFileNameWithoutExtension(source);
-            string outputFile = fileName + ".asm";
             CodeWriter codeWriter = new(fileName, outputFile);
 
-            TranslateFile(source, outputFile, codeWriter);
+            TranslateFile(source, codeWriter);
             codeWriter.Close();
         }
         else //folder
         {
-            string outputFile = source + ".asm";
-            CodeWriter codeWriter = new("FOLDER", outputFile);
+            CodeWriter codeWriter = new("Bootstrap", outputFile);
 
             var files = Directory.GetFiles(source);
             foreach (var file in files)
             {
-                if (!Path.GetExtension(source).Equals(".vm"))
-                    continue;
-
                 codeWriter.SetFileName(Path.GetFileNameWithoutExtension(file));
-                TranslateFile(file, outputFile, codeWriter);
+                TranslateFile(file, codeWriter);
             }
+
             codeWriter.Close();
         }
     }
 
-    private static void TranslateFile(string inputFile, string outputFile, CodeWriter codeWriter)
+    private static void TranslateFile(string inputFile, CodeWriter codeWriter)
     {
         Parser parser = new(inputFile);
         

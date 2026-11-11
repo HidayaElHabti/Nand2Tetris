@@ -19,7 +19,8 @@ namespace VMTranslator
             streamWriter = new(outputFile);
             boolean_counter = 0;
             return_counter = 0;
-            //TODO: write bootstrap code
+
+            WriteBootstrapCode();
         }
 
         public void SetFileName(string newFileName)
@@ -64,7 +65,7 @@ namespace VMTranslator
         }
         public void WriteFunction(string functionName, int nVars)
         {
-            WriteInstruction('(' + fileName + '.' + functionName + ')');//(FileName.FunctionName)
+            WriteInstruction('(' + functionName + ')');//(FileName.FunctionName)
             for (int i = 0; i < nVars; i++)
             {
                 WritePushInstructions("constant", 0);
@@ -94,7 +95,7 @@ namespace VMTranslator
             WritePopInstructions("LCL");//LCL = SP
 
             //goto f
-            WriteAInstruction(fileName + '.' + functionName);//@FileName.FunctionName
+            WriteAInstruction(functionName);//@FileName.FunctionName
             WriteInstruction("0;JMP");
 
             //define returnAddress
@@ -146,15 +147,25 @@ namespace VMTranslator
         }
         public void Close()
         {
-            //write infinite loop
-            WriteInstruction("(END)");
-            WriteInstruction("@END");
-            WriteInstruction("0;JMP");
+            ////write infinite loop
+            //WriteInstruction("(END)");
+            //WriteInstruction("@END");
+            //WriteInstruction("0;JMP");
 
             streamWriter.Close();
         }
 
         #region private
+        private void WriteBootstrapCode()
+        {
+            //SP=256
+            WriteAInstruction("256");//@256
+            WriteDRegisterAssignmentInstruction("A");//D=A
+            WriteAInstruction("SP");//@SP
+            WriteInstruction("M=D");//M=D
+
+            WriteCall("Sys.init", 0);
+        }
         private void WritePushInstructions(string address)
         {
             WriteAInstruction(address);//@value
@@ -250,7 +261,7 @@ namespace VMTranslator
         }
         private void WriteInstruction(string instruction)
         {
-            streamWriter.WriteLine("//" + instruction);
+            //streamWriter.WriteLine("//" + instruction);
             streamWriter.WriteLine(instruction);
         }
         private void WriteAInstruction(string address)

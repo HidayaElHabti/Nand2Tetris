@@ -1,0 +1,14 @@
+/**
+ * The Main class initializes a new Garage and turns it on.
+ */
+class Main {
+
+    function void Main() {
+        var Garage garage;
+        let garage = Garage.new(2);
+        do garage.turnOn();
+        do garage.dispose();
+        return;
+    }
+
+}

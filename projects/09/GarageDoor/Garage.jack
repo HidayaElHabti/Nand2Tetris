@@ -1,0 +1,31 @@
+/**
+* Implements a garage instance.
+* The garage has a door and a door frame.
+* The user gets to choose the door frame's width.
+* In the beginning, the garage door is closed (white screen).
+* Up and down arrows are used to open or close the garage door.
+* Space key is used to stop garage door.
+* 'x' key is used to turnOff the garage.
+*/
+
+class Garage {
+
+    field int doorFrameWidth;
+    field GarageDoor garageDoor;
+
+    constructor Garage new(int frameWidth){
+        return this;
+    }
+
+    method void dispose(){
+        return;
+    }
+
+    method void turnOn(){
+        return;
+    }
+
+    method void turnOff(){
+        return;
+    }
+}

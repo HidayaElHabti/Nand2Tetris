@@ -1,0 +1,31 @@
+/**
+* Implements a garage door instance.
+* The garage door has a height that is calculated
+* from the door's frame to its end.
+* The door's color is white and the garage's inside
+* is black.
+*/
+
+class GarageDoor {
+    field int height;
+
+    constructor GarageDoor new(int frameWidth){
+        return this;
+    }
+
+    method void dispose() {
+        return;
+    }
+
+    method void open() {
+        return;
+    }
+
+    method void close() {
+        return;
+    }
+
+    method void stop() {
+        return;
+    }
+}

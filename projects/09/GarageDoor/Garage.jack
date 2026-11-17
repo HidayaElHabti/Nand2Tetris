@@ -49,6 +49,7 @@ class Garage {
                 }
                 else {
                     let direction = 1;
+                    do door.resetSpeed();
                 }
             }
             if(key = 133){//down arrow
@@ -57,6 +58,7 @@ class Garage {
                 }
                 else {
                     let direction = 2;
+                    do door.resetSpeed();
                 }
             }
             if(key = 32){//space bar

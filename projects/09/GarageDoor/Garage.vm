@@ -73,6 +73,9 @@ label Garage_0
 label Garage_5
     push constant 1
     pop this 2
+    push this 0
+    call GarageDoor.resetSpeed 1
+    pop temp 0
 label Garage_4
     goto Garage_2
 label Garage_3
@@ -94,6 +97,9 @@ label Garage_2
 label Garage_9
     push constant 2
     pop this 2
+    push this 0
+    call GarageDoor.resetSpeed 1
+    pop temp 0
 label Garage_8
     goto Garage_6
 label Garage_7

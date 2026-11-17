@@ -3,11 +3,13 @@
  */
 class Main {
 
-    function void Main() {
+    function void main() {
         var Garage garage;
-        let garage = Garage.new(2);
+        var int frameWidth;
+        let frameWidth = Keyboard.readInt("What is your garage's door frame width?");
+        let garage = Garage.new(frameWidth);
         do garage.turnOn();
-        do garage.dispose();
+        //do garage.dispose();
         return;
     }
 

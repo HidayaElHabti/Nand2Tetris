@@ -1,19 +1,32 @@
 /**
 * Implements a garage instance.
-* The garage has a door and a door frame.
+* The garage has a door surrounded by a door frame.
 * The user gets to choose the door frame's width.
 * In the beginning, the garage door is closed (white screen).
 * Up and down arrows are used to open or close the garage door.
-* Space key is used to stop garage door.
-* 'x' key is used to turnOff the garage.
+* Space key is used to stop the garage door.
+* 'q' key is used to turnOff the garage.
 */
 
 class Garage {
 
+    field GarageDoor door;
     field int doorFrameWidth;
-    field GarageDoor garageDoor;
+    field int direction;//0=stop,1=up,2=down
 
     constructor Garage new(int frameWidth){
+        do Screen.clearScreen();
+
+        //draw door frame
+        do Screen.setColor(true);
+        do Screen.drawLine(frameWidth,frameWidth,frameWidth,256);
+        do Screen.drawLine(frameWidth,frameWidth,512-frameWidth,frameWidth);
+        do Screen.drawLine(512-frameWidth,frameWidth,512-frameWidth,256);
+
+        //initialize door
+        let door = GarageDoor.new(frameWidth);
+
+        let direction = 0;
         return this;
     }
 
@@ -22,10 +35,49 @@ class Garage {
     }
 
     method void turnOn(){
+        var char key;
+        var boolean quit;
+
+        let quit = false;
+        while (~quit){
+            let key = Keyboard.keyPressed();
+            //when a key gets pressed
+            if(key = 131){//up arrow
+                let direction = 1;
+            }
+            if(key = 133){//down arrow
+                let direction = 2;
+            }
+            if(key = 32){//space bar
+                let direction = 0;
+            }
+            if(key = 113){//q key
+                let quit = true;
+            }
+
+            do moveDoor();
+
+            /*while (~(key = 0)) {
+                do moveDoor();
+                let key = Keyboard.keyPressed();
+            }*/
+        }
         return;
     }
 
     method void turnOff(){
+        return;
+    }
+
+    method void moveDoor() {
+        if(direction = 1) {
+            do door.moveUp();
+        }
+        if(direction = 2) {
+            do door.moveDown();
+        }
+
+        do Sys.wait(5);
         return;
     }
 }

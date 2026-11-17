@@ -1,0 +1,142 @@
+function GarageDoor.new 0
+    push constant 4
+    call Memory.alloc 1
+    pop pointer 0
+    push argument 0
+    pop this 0
+    push constant 0
+    pop this 1
+    push constant 1
+    pop this 2
+    push pointer 0
+    return
+function GarageDoor.dispose 0
+    push argument 0
+    pop pointer 0
+    push constant 0
+    return
+function GarageDoor.moveUp 0
+    push argument 0
+    pop pointer 0
+    push this 1
+    push constant 255
+    push this 0
+    sub
+    eq
+    not
+    not
+    if-goto GarageDoor_1
+    push this 1
+    push constant 256
+    push this 0
+    sub
+    push this 2
+    sub
+    lt
+    not
+    if-goto GarageDoor_3
+    push this 1
+    push this 2
+    add
+    pop this 1
+    goto GarageDoor_2
+label GarageDoor_3
+    push constant 255
+    push this 0
+    sub
+    pop this 1
+label GarageDoor_2
+    push constant 1
+    neg
+    call Screen.setColor 1
+    pop temp 0
+    push this 0
+    push constant 1
+    add
+    push constant 256
+    push this 1
+    sub
+    push constant 511
+    push this 0
+    sub
+    push constant 256
+    call Screen.drawRectangle 4
+    pop temp 0
+    goto GarageDoor_0
+label GarageDoor_1
+label GarageDoor_0
+    push constant 0
+    return
+function GarageDoor.moveDown 0
+    push argument 0
+    pop pointer 0
+    push this 1
+    push constant 0
+    eq
+    not
+    not
+    if-goto GarageDoor_5
+    push this 1
+    push this 2
+    push constant 1
+    add
+    gt
+    not
+    if-goto GarageDoor_7
+    push this 1
+    push this 2
+    sub
+    pop this 1
+    goto GarageDoor_6
+label GarageDoor_7
+    push constant 0
+    pop this 1
+label GarageDoor_6
+    push constant 0
+    call Screen.setColor 1
+    pop temp 0
+    push this 0
+    push constant 1
+    add
+    push this 0
+    push constant 1
+    add
+    push constant 511
+    push this 0
+    sub
+    push constant 256
+    push this 1
+    sub
+    call Screen.drawRectangle 4
+    pop temp 0
+    goto GarageDoor_4
+label GarageDoor_5
+label GarageDoor_4
+    push constant 0
+    return
+function GarageDoor.incSpeed 0
+    push argument 0
+    pop pointer 0
+    push this 2
+    push constant 2
+    add
+    pop this 2
+    push constant 0
+    return
+function GarageDoor.decSpeed 0
+    push argument 0
+    pop pointer 0
+    push this 2
+    push constant 6
+    gt
+    not
+    if-goto GarageDoor_9
+    push this 2
+    push constant 2
+    sub
+    pop this 2
+    goto GarageDoor_8
+label GarageDoor_9
+label GarageDoor_8
+    push constant 0
+    return

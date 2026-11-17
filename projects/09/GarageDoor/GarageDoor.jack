@@ -1,15 +1,26 @@
 /**
 * Implements a garage door instance.
-* The garage door has a height that is calculated
-* from the door's frame to its end.
+* The garage door opens and closes using
+* up and down arrows.
+* The garage door has a height; 
+* distance from floor to the door's end, 
+* and a speed of its opening and closing.
+* The speed can be increased and decreased using
+* '' and '' keys.
 * The door's color is white and the garage's inside
 * is black.
 */
 
 class GarageDoor {
+    field int frameWidth; 
     field int height;
+    field int speed;
+    field boolean open;
 
-    constructor GarageDoor new(int frameWidth){
+    constructor GarageDoor new(int width){
+        let frameWidth = width;
+        let height = 0;//garage door starts closed
+        let speed = 1;//default speed is 1
         return this;
     }
 
@@ -17,15 +28,43 @@ class GarageDoor {
         return;
     }
 
-    method void open() {
+    method void moveUp() {
+        if(~(height=(255-frameWidth))){
+            if(height < (256-frameWidth-speed)){
+                let height = height + speed;
+            }
+            else {
+                let height = 255-frameWidth;
+            }
+            do Screen.setColor(true);
+            do Screen.drawRectangle(frameWidth+1,256-height,511-frameWidth,256);
+        }
         return;
     }
 
-    method void close() {
+    method void moveDown() {
+        if(~(height=0)){
+            if(height > (speed + 1)) {
+                let height = height - speed;
+            }
+            else {
+                let height = 0;
+            }
+            do Screen.setColor(false);
+            do Screen.drawRectangle(frameWidth+1,frameWidth+1,511-frameWidth,256-height);
+        }
         return;
     }
 
-    method void stop() {
+    method void incSpeed() {
+        let speed = speed + 2;
+        return;
+    }
+
+    method void decSpeed() {
+        if(speed > 6) {//min speed is 5
+            let speed = speed - 2;
+        }
         return;
     }
 }

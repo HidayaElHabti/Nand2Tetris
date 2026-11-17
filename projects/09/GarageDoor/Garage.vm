@@ -61,8 +61,19 @@ label Garage_0
     eq
     not
     if-goto Garage_3
+    push this 2
+    push constant 1
+    eq
+    not
+    if-goto Garage_5
+    push this 0
+    call GarageDoor.incSpeed 1
+    pop temp 0
+    goto Garage_4
+label Garage_5
     push constant 1
     pop this 2
+label Garage_4
     goto Garage_2
 label Garage_3
 label Garage_2
@@ -70,33 +81,47 @@ label Garage_2
     push constant 133
     eq
     not
-    if-goto Garage_5
+    if-goto Garage_7
+    push this 2
     push constant 2
-    pop this 2
-    goto Garage_4
-label Garage_5
-label Garage_4
-    push local 0
-    push constant 32
     eq
     not
-    if-goto Garage_7
-    push constant 0
+    if-goto Garage_9
+    push this 0
+    call GarageDoor.incSpeed 1
+    pop temp 0
+    goto Garage_8
+label Garage_9
+    push constant 2
     pop this 2
+label Garage_8
     goto Garage_6
 label Garage_7
 label Garage_6
     push local 0
+    push constant 32
+    eq
+    not
+    if-goto Garage_11
+    push constant 0
+    pop this 2
+    push this 0
+    call GarageDoor.resetSpeed 1
+    pop temp 0
+    goto Garage_10
+label Garage_11
+label Garage_10
+    push local 0
     push constant 113
     eq
     not
-    if-goto Garage_9
+    if-goto Garage_13
     push constant 1
     neg
     pop local 1
-    goto Garage_8
-label Garage_9
-label Garage_8
+    goto Garage_12
+label Garage_13
+label Garage_12
     push pointer 0
     call Garage.moveDoor 1
     pop temp 0
@@ -116,25 +141,40 @@ function Garage.moveDoor 0
     push constant 1
     eq
     not
-    if-goto Garage_11
+    if-goto Garage_15
     push this 0
     call GarageDoor.moveUp 1
     pop temp 0
-    goto Garage_10
-label Garage_11
-label Garage_10
+    goto Garage_14
+label Garage_15
+label Garage_14
     push this 2
     push constant 2
     eq
     not
-    if-goto Garage_13
+    if-goto Garage_17
     push this 0
     call GarageDoor.moveDown 1
     pop temp 0
-    goto Garage_12
-label Garage_13
-label Garage_12
-    push constant 5
+    goto Garage_16
+label Garage_17
+label Garage_16
+    push this 0
+    call GarageDoor.isOpen 1
+    push this 0
+    call GarageDoor.isClosed 1
+    or
+    not
+    if-goto Garage_19
+    push constant 0
+    pop this 2
+    push this 0
+    call GarageDoor.resetSpeed 1
+    pop temp 0
+    goto Garage_18
+label Garage_19
+label Garage_18
+    push constant 100
     call Sys.wait 1
     pop temp 0
     push constant 0

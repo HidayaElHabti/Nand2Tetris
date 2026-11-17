@@ -41,26 +41,33 @@ class Garage {
         let quit = false;
         while (~quit){
             let key = Keyboard.keyPressed();
+            
             //when a key gets pressed
             if(key = 131){//up arrow
-                let direction = 1;
+                if(direction = 1) {//up arrow pressed while already moving up
+                    do door.incSpeed();
+                }
+                else {
+                    let direction = 1;
+                }
             }
             if(key = 133){//down arrow
-                let direction = 2;
+                if(direction = 2) {//down arrow pressed while already moving down
+                    do door.incSpeed();
+                }
+                else {
+                    let direction = 2;
+                }
             }
             if(key = 32){//space bar
                 let direction = 0;
+                do door.resetSpeed();
             }
             if(key = 113){//q key
                 let quit = true;
             }
 
             do moveDoor();
-
-            /*while (~(key = 0)) {
-                do moveDoor();
-                let key = Keyboard.keyPressed();
-            }*/
         }
         return;
     }
@@ -76,8 +83,11 @@ class Garage {
         if(direction = 2) {
             do door.moveDown();
         }
-
-        do Sys.wait(5);
+        if(door.isOpen() | door.isClosed()){
+            let direction = 0;
+            do door.resetSpeed();
+        }
+        do Sys.wait(100);
         return;
     }
 }

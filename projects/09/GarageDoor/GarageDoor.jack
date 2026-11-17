@@ -5,8 +5,8 @@
 * The garage door has a height; 
 * distance from floor to the door's end, 
 * and a speed of its opening and closing.
-* The speed can be increased and decreased using
-* '' and '' keys.
+* The speed is increased by clicking 
+* on up and down arrows multiple times.
 * The door's color is white and the garage's inside
 * is black.
 */
@@ -29,7 +29,7 @@ class GarageDoor {
     }
 
     method void moveUp() {
-        if(~(height=(255-frameWidth))){
+        if(~isOpen()){
             if(height < (256-frameWidth-speed)){
                 let height = height + speed;
             }
@@ -43,7 +43,7 @@ class GarageDoor {
     }
 
     method void moveDown() {
-        if(~(height=0)){
+        if(~isClosed()){
             if(height > (speed + 1)) {
                 let height = height - speed;
             }
@@ -57,14 +57,27 @@ class GarageDoor {
     }
 
     method void incSpeed() {
-        let speed = speed + 2;
+        let speed = speed + 1;
         return;
     }
 
     method void decSpeed() {
-        if(speed > 6) {//min speed is 5
-            let speed = speed - 2;
+        if(speed > 1) {//min speed is 1
+            let speed = speed - 1;
         }
         return;
+    }
+
+    method void resetSpeed() {
+        let speed = 1;
+        return;
+    }
+
+    method boolean isOpen(){
+        return (height=(255-frameWidth));
+    }
+
+    method boolean isClosed(){
+        return (height=0);
     }
 }

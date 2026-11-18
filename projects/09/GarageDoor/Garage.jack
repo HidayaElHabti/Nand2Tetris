@@ -31,6 +31,8 @@ class Garage {
     }
 
     method void dispose(){
+        do door.dispose();
+        do Memory.deAlloc(this);
         return;
     }
 
@@ -71,10 +73,6 @@ class Garage {
 
             do moveDoor();
         }
-        return;
-    }
-
-    method void turnOff(){
         return;
     }
 

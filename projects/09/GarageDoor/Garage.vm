@@ -42,6 +42,12 @@ function Garage.new 0
 function Garage.dispose 0
     push argument 0
     pop pointer 0
+    push this 0
+    call GarageDoor.dispose 1
+    pop temp 0
+    push pointer 0
+    call Memory.deAlloc 1
+    pop temp 0
     push constant 0
     return
 function Garage.turnOn 2
@@ -133,11 +139,6 @@ label Garage_12
     pop temp 0
     goto Garage_0
 label Garage_1
-    push constant 0
-    return
-function Garage.turnOff 0
-    push argument 0
-    pop pointer 0
     push constant 0
     return
 function Garage.moveDoor 0

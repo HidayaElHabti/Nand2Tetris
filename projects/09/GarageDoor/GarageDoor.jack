@@ -25,6 +25,7 @@ class GarageDoor {
     }
 
     method void dispose() {
+        do Memory.deAlloc(this);
         return;
     }
 

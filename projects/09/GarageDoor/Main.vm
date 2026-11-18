@@ -87,5 +87,8 @@ function Main.main 2
     push local 0
     call Garage.turnOn 1
     pop temp 0
+    push local 0
+    call Garage.dispose 1
+    pop temp 0
     push constant 0
     return

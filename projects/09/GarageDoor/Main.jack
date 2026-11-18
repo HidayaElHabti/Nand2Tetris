@@ -9,7 +9,7 @@ class Main {
         let frameWidth = Keyboard.readInt("What is your garage's door frame width?");
         let garage = Garage.new(frameWidth);
         do garage.turnOn();
-        //do garage.dispose();
+        do garage.dispose();
         return;
     }
 

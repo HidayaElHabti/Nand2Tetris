@@ -6,7 +6,7 @@
      * */
     class CompilationEngine
     {
-        public CompilationEngine(string inputFile, string outputFile)
+        public CompilationEngine(StreamReader streamReader, StreamWriter streamWriter)
         {
 
         }

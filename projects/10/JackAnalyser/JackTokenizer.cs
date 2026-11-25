@@ -8,7 +8,7 @@
     class JackTokenizer
     {
         //Opens the input .jack file/stream and gets ready to tokenize it.
-        public JackTokenizer(string inputFile)
+        public JackTokenizer(StreamReader streamReader)
         {
 
         }

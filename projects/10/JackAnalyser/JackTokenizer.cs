@@ -5,7 +5,7 @@
      * enables accessing the input one token at a time. Also, it parses and provides
      * the type of each token, as defined by the Jack grammar.
      */
-    internal class JackTokenizer
+    class JackTokenizer
     {
         //Opens the input .jack file/stream and gets ready to tokenize it.
         public JackTokenizer(string inputFile)

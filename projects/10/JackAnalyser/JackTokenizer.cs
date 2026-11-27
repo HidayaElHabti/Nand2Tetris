@@ -12,13 +12,22 @@ namespace JackAnalyser
         private readonly static string RE_SYMBOL = @"\{|\}|\(|\)|\[|\]|\.|,|;|\+|-|\*|/|&|\||\<|\>|=|~";
         private readonly static string RE_STRING = @"""[^""]*""";
         private readonly static string RE_SPLIT = "(" + RE_SYMBOL + "|" + RE_STRING + @")|\s+";
-        private string file;
+
+
+        private string sourceFile;
         private List<string> tokens;
-        string? currentToken;
+        private string? currentToken;
+        private int counter;
+
         //Receives the input .jack file as a string and gets ready to tokenize it.
         public JackTokenizer(string inputFile)
         {
-            file = inputFile;
+            sourceFile = inputFile;
+            tokens = new List<string>();
+            counter = 0;
+
+            RemoveComments();
+            SetTokens();
             Advance();
         }
 
@@ -32,7 +41,8 @@ namespace JackAnalyser
         //Called only if HasMoreToken is true.
         public void Advance()
         {
-            
+            counter++;
+            currentToken = tokens[counter];
         }
 
         //Returns the type of the current token
@@ -77,19 +87,24 @@ namespace JackAnalyser
         }
 
         #region Private
-        private List<string> TokenizeFile(string file)
+        private void RemoveComments()
         {
-            var split_code = Regex.Split(file, RE_SPLIT);
-            var tokens = new List<string>();
+            sourceFile = Regex.Replace(sourceFile, "//.*?\n", "\n");
+            sourceFile = Regex.Replace(sourceFile, @"/\*.*?\*/", "", RegexOptions.Singleline);
+        }
+        private void SetTokens()
+        {
+            var split_code = Regex.Split(sourceFile, RE_SPLIT);
 
             foreach(var expression in split_code)
             {
-                if(expression != null || !Regex.IsMatch(expression, @"^\s*$"))
+                if (expression != null && !Regex.IsMatch(expression!, @"^\s*$"))
                 {
-                    tokens.Add(expression);
+                    tokens.Add(expression!);
                 }
             }
-            return tokens;
+
+            currentToken = tokens[0];
         }
         #endregion
     }

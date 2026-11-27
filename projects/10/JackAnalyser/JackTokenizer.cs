@@ -1,4 +1,6 @@
-﻿namespace JackAnalyser
+﻿using System.Text.RegularExpressions;
+
+namespace JackAnalyser
 {
     /*
      * This module ignores all comments and white space in the input stream and
@@ -7,23 +9,30 @@
      */
     class JackTokenizer
     {
-        //Opens the input .jack file/stream and gets ready to tokenize it.
-        public JackTokenizer(StreamReader streamReader)
+        private readonly static string RE_SYMBOL = @"\{|\}|\(|\)|\[|\]|\.|,|;|\+|-|\*|/|&|\||\<|\>|=|~";
+        private readonly static string RE_STRING = @"""[^""]*""";
+        private readonly static string RE_SPLIT = "(" + RE_SYMBOL + "|" + RE_STRING + @")|\s+";
+        private string file;
+        private List<string> tokens;
+        string? currentToken;
+        //Receives the input .jack file as a string and gets ready to tokenize it.
+        public JackTokenizer(string inputFile)
         {
-
+            file = inputFile;
+            Advance();
         }
 
         //Are there more tokens in the input?
         public bool HasMoreTokens()
         {
-            return false;
+            return currentToken != null;
         }
 
         //Gets the next token from the input and makes it the current token.
         //Called only if HasMoreToken is true.
         public void Advance()
         {
-
+            
         }
 
         //Returns the type of the current token
@@ -66,8 +75,25 @@
         {
             return "hi";
         }
+
+        #region Private
+        private List<string> TokenizeFile(string file)
+        {
+            var split_code = Regex.Split(file, RE_SPLIT);
+            var tokens = new List<string>();
+
+            foreach(var expression in split_code)
+            {
+                if(expression != null || !Regex.IsMatch(expression, @"^\s*$"))
+                {
+                    tokens.Add(expression);
+                }
+            }
+            return tokens;
+        }
+        #endregion
     }
-    
+
     enum TokenType
     {
         KEYWORD,

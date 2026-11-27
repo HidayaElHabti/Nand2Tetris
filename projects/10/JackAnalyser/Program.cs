@@ -26,17 +26,25 @@ class Program
             var files = Directory.GetFiles(source);
             foreach (var file in files)
             {
-
+                if(Path.GetExtension(file).Equals(".jack"))
+                    AnalyseFile(file, Path.GetFileNameWithoutExtension(file) + ".xml");
             }
         }
     }
-    private static void AnalyseFile(string inputFile, string outputFile)
+    private static void AnalyseFile(string inputFilePath, string outputFilePath)
     {
-        var streamReader = new StreamReader(inputFile);
-        var streamWriter = new StreamWriter(outputFile);
+        string inputFile;
+        using (var streamReader = new StreamReader(inputFilePath))
+        {
+            inputFile = streamReader.ReadToEnd();
+        }
+            
+        var streamWriter = new StreamWriter(outputFilePath);
 
-        var jackTokenizer = new JackTokenizer(streamReader);
-        var compilationEngine = new CompilationEngine(streamReader, streamWriter);
+        var jackTokenizer = new JackTokenizer(inputFile);
+        //var compilationEngine = new CompilationEngine(streamReader, streamWriter);
+
+        streamWriter.WriteLine("<tokens>");
 
         while (jackTokenizer.HasMoreTokens())
         {
@@ -44,7 +52,8 @@ class Program
             jackTokenizer.Advance();
         }
 
-        streamReader.Close();
+        streamWriter.WriteLine("</tokens>");
+
         streamWriter.Close();
     }
 }
